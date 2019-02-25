@@ -10,6 +10,8 @@ export class HeroesComponent implements OnInit {
 
   heroes: Hero[];
   selectedHero: Hero;
+  addingHero = false;
+  error: any;
 
   constructor(private heroService: HeroService) { 
 
@@ -21,10 +23,28 @@ export class HeroesComponent implements OnInit {
 
   onSelect(hero: Hero): void {
     this.selectedHero = hero;
+    this.addingHero = false;
   }
 
   getHeroes(): void {
-    this.heroService.getHeroes()
-      .subscribe(heroes => this.heroes = heroes);
+    this.heroService
+      .getHeroes()
+      .subscribe(
+        heroes => this.heroes = heroes,
+        error => (this.error = error));
   }
+
+  addHero(): void {
+    this.addingHero = true;
+    this.selectedHero = null;
+  }
+
+  close(savedHero: Hero): void {
+    this.addingHero = false;
+    if (savedHero) {
+      this.getHeroes();
+    }
+  }
+
+
 }
