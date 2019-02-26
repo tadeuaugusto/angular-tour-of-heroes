@@ -38,6 +38,19 @@ export class HeroService {
     );
   }
 
+  updateHero(hero: Hero): Observable<any> {
+
+    const httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    };
+
+    this.messageService.add(`HeroService: updated hero id=${hero.id}`);
+    return this.http.put(this.heroesUrl, hero, httpOptions).pipe(
+      tap(_ => this.log(`HeroService: fetched hero id=${hero.id}`)),
+      catchError(this.handleError<any>('updateHero'))
+    );
+  }
+
   /**
   * Handle Http operation that failed.
   * Let the app continue.
