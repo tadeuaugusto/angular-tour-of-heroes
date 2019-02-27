@@ -5,6 +5,9 @@ import { MessageService } from "./message.service";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { catchError, map, tap } from "rxjs/operators";
 
+const httpOptions = {
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+};
 @Injectable({
   providedIn: 'root'
 })
@@ -19,10 +22,10 @@ export class HeroService {
   /** GET heroes from the server */
   getHeroes(): Observable<Hero[]> {
 
-    this.messageService.add('HeroService: fetched heroes');
+    // this.messageService.add('HeroService: fetched heroes');
     return this.http.get<Hero[]>(this.heroesUrl)
         .pipe(
-            tap(_ => this.log('HeroService: fetched heroes')),
+            tap(_ => this.log('fetched heroes')),
             catchError(this.handleError('getHeroes', []))
         );
   }
@@ -31,24 +34,30 @@ export class HeroService {
 
     const url = `${this.heroesUrl}/${id}`;
 
-    this.messageService.add(`HeroService: fetched hero id=${id}`);
+    // this.messageService.add(`HeroService: fetched hero id=${id}`);
     return this.http.get<Hero>(url).pipe(
-      tap(_ => this.log(`HeroService: fetched hero id=${id}`)),
+      tap(_ => this.log(`fetched hero id=${id}`)),
       catchError(this.handleError<Hero>(`getHero id=${id}`))
     );
   }
 
   updateHero(hero: Hero): Observable<any> {
 
-    const httpOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    };
+    // this.messageService.add(`HeroService: updated hero id=${hero.id}`);
+    return this.http.put(this.heroesUrl, hero, httpOptions)
+      .pipe(
+        tap(_ => this.log(`fetched hero id=${hero.id}`)),
+        catchError(this.handleError<any>('updateHero'))
+      );
+  }
 
-    this.messageService.add(`HeroService: updated hero id=${hero.id}`);
-    return this.http.put(this.heroesUrl, hero, httpOptions).pipe(
-      tap(_ => this.log(`HeroService: fetched hero id=${hero.id}`)),
-      catchError(this.handleError<any>('updateHero'))
-    );
+  /** POST: add a new hero to the server */
+  addHero(hero: Hero): Observable<Hero> {
+    return this.http.post<Hero>(this.heroesUrl, hero, httpOptions)
+      .pipe(
+        tap((newHero: Hero) => this.log(`added hero with id=${newHero.id}`)),
+        catchError(this.handleError<Hero>('addHero'))
+      );
   }
 
   /**
