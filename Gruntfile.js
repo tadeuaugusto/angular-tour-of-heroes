@@ -1,4 +1,5 @@
 module.exports = function (grunt) {
+    require('load-grunt-tasks')(grunt);
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         autoprefixer: {
@@ -19,33 +20,17 @@ module.exports = function (grunt) {
                 }
             }
         },
-        uglify: {
-            dist: {
-              files: {
-                'dest/output.min.js': ['src/app/*.js']
-              }
-            }
-          }
-    })
+        watch: {
+            files: ['Gruntfile.js'],
+            tasks: ['jshint']
+        },
+        jshint: {
+            all: ['Gruntfile.js', './src/**/*.js']
+        },
+    });
 
     grunt.loadNpmTasks("grunt-contrib-cssmin");
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
     grunt.registerTask("default", []);
-}
-/*
-module.exports = function (grunt) {
-    grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
-        autoprefixer: {
-            options: {
-
-            },
-            dist: {
-
-            }
-        }
-    })
-
-    grunt.loadNpmTasks('grunt-autoprefixer')
-}
-*/
+};
